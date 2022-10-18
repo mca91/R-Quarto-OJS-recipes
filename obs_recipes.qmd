@@ -8,6 +8,8 @@ format:
     code-fold: false
 ---
 
+Click [here]() to see the source of this HTML document.
+
 Observable offers many different ways to graph your data, but the line chart, bar chart, and scatter plot are basic and should definitely be learned. Tremendous flexibility and customisation are possible for such charts, but in this article we will cover only the simple cases presented [here](https://observablehq.com/@observablehq/chart-starter-recipes) and focus on integrating them into a simple Quarto document such that data can be manipulated and provided using R.
 
 ## Preliminaries
