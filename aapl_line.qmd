@@ -1,0 +1,114 @@
+---
+title: "Simple recipes for three basic Observable plot types in Quarto"
+subtitle: "Spiced with some R"
+author: "Martin C. Arnold"
+format: 
+  html:
+    css: styles.css 
+    code-fold: false
+---
+
+Observable offers many different ways to graph your data, but the line chart, bar chart, and scatter plot are basic and should definitely be learned. Tremendous flexibility and customisation are possible for such charts, but in this article we will cover only the simple cases presented [here](https://observablehq.com/@observablehq/chart-starter-recipes) and focus on integrating them into a simple Quarto document such that data can be manipulated and provided using R.
+
+## Preliminaries
+
+The `.qmd` file for generating this document has the following YAML header.
+
+```{YAML}
+---
+title: "A line graph of Apple stock close prices"
+author: "Martin C. Arnold"
+format: 
+  html:
+    css: styles.css 
+    code-fold: false
+---
+```
+
+`styles.css` contains the following CSS code for centering SVG elements in their enclosing divs.
+
+::: {.column-margin}
+Observable plots are shown in SVG elements. Centering these is my personal preference and thus optional 🙂.
+:::
+
+```{CSS}
+div > svg {
+  margin-left: auto;
+  margin-right: auto;
+}
+```
+
+## Line chart
+
+Let's read the `aapl.csv` data into `R` and then make it available to Observable.js (OJS). The data is attached with the observable notebook linked above. For the code chunk below to work we need `aapl.csv` in the same directory as the `.qmd` document.
+
+```{r, eval=F, echo=T}
+# we can read R data like this
+library(tidyverse)
+R_data <- read_csv("aapl.csv")
+# ... and make it available to OJS like this
+ojs_define(data = R_data)
+```
+
+It is also possible to load directly using Observable. We use a chunk with header ````{OJS}` and use `FileAttachement(<path>)`. We use the `.csv` method since the we're dealing with a `.csv` file (the code below assumes that `aapl.csv` is in the same folder as the `.qmd` file).
+
+::: {.column-margin}
+Note that there's no need to include any JavaScript libraries in the document or chunk header--Quarto takes care of it!
+:::
+
+```{ojs, echo=T, eval=T}
+/* in OJS we would do it like this  */
+data = FileAttachment("aapl.csv")
+  .csv({typed: true});
+```
+
+We may now graph the data.
+
+```{ojs}
+//| eval: true
+//| fig-cap: "Apple Stock -- close prices"
+
+Plot.plot({
+  width: 600, height: 400,
+  marks: [
+    Plot.ruleY([40]),
+    Plot.lineY(data, {x: "Date", y: "Close"})
+  ]
+})
+```
+
+
+## Bar chart
+
+```{ojs}
+//| eval: true
+//| fig-cap: "Relative frequencies of letters in `alphabet` dataset"
+
+Plot.plot({
+  width: 600, height: 400,
+  marks: [
+    Plot.barY(
+      alphabet, 
+      {x: "letter", y: "frequency", sort: {x: "y", reverse: true}}
+    ),
+    Plot.ruleY([0])
+  ]
+})
+```
+
+## Scatter plot
+
+```{ojs}
+//| eval: true
+//| fig-cap: "Fuel economy of cars in `cars` dataset"
+
+Plot.plot({
+  width: 600, height: 400,
+  marks: [
+    Plot.dot(cars, {x: "power (hp)", y: "economy (mpg)"})
+  ]
+})
+```
+
+
+
