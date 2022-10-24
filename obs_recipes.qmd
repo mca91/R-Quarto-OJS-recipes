@@ -10,7 +10,7 @@ format:
 
 Click [here]() to see the source of this HTML document.
 
-Observable offers many different ways to graph your data, but the line chart, bar chart, and scatter plot are basic and should definitely be learned. Tremendous flexibility and customisation are possible for such charts, but in this article we will cover only the simple cases presented [here](https://observablehq.com/@observablehq/chart-starter-recipes) and focus on integrating them into a simple Quarto document such that data can be manipulated and provided using R.
+Observable offers many different ways to graph your data, but the line chart, bar chart, and scatter plot are basic and should definitely be learned. Tremendous flexibility and customisation are possible for such charts, but in this article we will cover only the simple cases--inspired by the ones presented [here](https://observablehq.com/@observablehq/chart-starter-recipes)--and focus on integrating them into a simple [Quarto document](https://quarto.org/docs/guide/) such that data can be manipulated and provided using R.
 
 ## Preliminaries
 
@@ -29,10 +29,6 @@ format:
 
 `styles.css` contains the following CSS code for centering SVG elements in their enclosing divs.
 
-::: {.column-margin}
-Observable plots are shown in SVG elements. Centering these is my personal preference and thus optional 🙂.
-:::
-
 ```{CSS}
 div > svg {
   margin-left: auto;
@@ -40,19 +36,21 @@ div > svg {
 }
 ```
 
-## Line chart
+::: {.column-margin}
+Observable plots are shown in SVG elements. Centering these is personal preference and thus optional 🙂.
+:::
 
-Let's read the `aapl.csv` data into `R` and then make it available to Observable.js (OJS). The data is attached with the observable notebook linked above. For the code chunk below to work we need `aapl.csv` in the same directory as the `.qmd` document.
+We will make use of the below R packages.
 
-```{r, eval=F, echo=T}
-# we can read R data like this
+```{r, warning=F, message=F}
 library(tidyverse)
-R_data <- read_csv("aapl.csv")
-# ... and make it available to OJS like this
-ojs_define(data = R_data)
+library(cowplot)
+library(reactable)
 ```
 
-It is also possible to load directly using Observable. We use a chunk with header ````{OJS}` and use `FileAttachement(<path>)`. We use the `.csv` method since the we're dealing with a `.csv` file (the code below assumes that `aapl.csv` is in the same folder as the `.qmd` file).
+## Line chart
+
+We may to attach external data for Observable plots in a chunk with header ````{OJS}` and use the `FileAttachement()` function. Below ee use the `.csv` method since the we're dealing with a `.csv` file. The code below assumes that `aapl.csv` is in the same folder as the `.qmd` file. The `.csv` is attached with the observable notebook linked above.
 
 ::: {.column-margin}
 Note that there's no need to include any JavaScript libraries in the document or chunk header--Quarto takes care of it!
@@ -64,7 +62,7 @@ data = FileAttachment("aapl.csv")
   .csv({typed: true});
 ```
 
-We may now graph the data.
+We may now graph the data. Note that in line we set dimensions of the SVG element in line 2 using `width: 600, height: 400`.
 
 ```{ojs}
 //| eval: true
@@ -78,9 +76,25 @@ Plot.plot({
   ]
 })
 ```
+::: {.column-margin}
+Here's an R version of the plot:
+
+```{r, message = F}
+R_data <- read_csv(
+  "aapl.csv"
+)
+ggplot(R_data, 
+  aes(x = Date, y = Close)
+  ) + 
+  geom_line() +
+  theme_cowplot()
+```
+:::
 
 
 ## Bar chart
+
+Similarly we may generate bar charts. Note that the dataset `alphabet` does not have to be included externally, because it is already available with the OJS library.
 
 ```{ojs}
 //| eval: true
@@ -88,6 +102,7 @@ Plot.plot({
 
 Plot.plot({
   width: 600, height: 400,
+  y: { label: "freq" },
   marks: [
     Plot.barY(
       alphabet, 
@@ -98,7 +113,9 @@ Plot.plot({
 })
 ```
 
-## Scatter plot
+## Scatterplot
+
+The dataset `cars` (I think it's the same data as in the popular R dataset) also comes with the OJS library . We create the scatterplot as follows:
 
 ```{ojs}
 //| eval: true
@@ -112,5 +129,62 @@ Plot.plot({
 })
 ```
 
+# Manipulating data with and supplying it using R   
 
+Let's play with the `iris` data in `R` and then make it available to Observable.js (OJS). We first allow users to glimpse at the data using [reactable](https://glin.github.io/reactable/).
 
+```{r, eval=T, echo=T, message=F}
+reactable::reactable(iris)
+```
+
+Next, we summarise variables by species (by computing group means for all variables in the datset).
+
+```{r}
+iris_means <- iris %>% 
+  group_by(Species) %>% 
+  summarise_all(.funs = mean)
+```
+
+R-data is made available to OJS using `ojs_define()`.
+
+```{r}
+ojs_define(
+  iris = iris,
+  iris_means = iris_means
+)
+```
+
+We may check that these data are indeed available to Observable: they are objects that hold multiple arrays. The following statements are evaluated in `ojs` chunks.
+
+```{ojs}
+iris
+iris_means
+```
+
+For the data to be `compatible' with Observable plot we need to `transpose()`. Below we plot `Sepal.Length` and `Sepal.Width` colored by `Species` and add marks for their group means. 
+
+```{ojs}
+/* define plot object */
+iris_plot = Plot.plot({
+  width: 600, height: 400,
+  marks: [
+    Plot.dot(
+      transpose(iris), {
+        x: "Sepal.Length", 
+        y: "Sepal.Width",
+        fill: "Species",
+        r: 3
+      }),
+      
+    Plot.dot(transpose(iris_means), {
+       x: "Sepal.Length", 
+       y: "Sepal.Width",
+       fill: "Species",
+       r: 6
+    })
+  ]
+})
+
+/* add legend for color */  
+iris_plot.legend("color")
+```
