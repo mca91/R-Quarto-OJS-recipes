@@ -161,7 +161,7 @@ iris
 iris_means
 ```
 
-For the data to be `compatible' with Observable plot we need to `transpose()`. Below we plot `Sepal.Length` and `Sepal.Width` colored by `Species` and add marks for their group means. 
+For the data to be "compatible" with Observable plot we need to `transpose()`. Below we plot `Sepal.Length` and `Sepal.Width` colored by `Species` and add marks for their group means. 
 
 ```{ojs}
 /* define plot object */
