@@ -192,7 +192,11 @@ iris_plot.legend("color")
 
 ## D3.js
 
-```{ojs, echo = F}
+Here's how to integrate D3 in the Quarto document. Below is a more involved example that replicates the US unemployment histogram shown [here](https://observablehq.com/@d3/histogram) (I've just removed the horizontal lines). Note that we need to download `unemployment-x.csv` from the notebook and insert it in the same folder as the `.qmd`.
+
+```{ojs}
+//| echo: true
+
 d3 = require("d3@7")
 
 // Copyright 2021 Observable, Inc.
@@ -212,7 +216,7 @@ function Histogram(data, {
   marginRight = 30, // right margin, in pixels
   marginBottom = 30, // bottom margin, in pixels
   marginLeft = 40, // left margin, in pixels
-  width = 640, // outer width of chart, in pixels
+  width = 600, // outer width of chart, in pixels
   height = 400, // outer height of chart, in pixels
   insetLeft = 0.5, // inset left edge of bar
   insetRight = 0.5, // inset right edge of bar
@@ -262,9 +266,6 @@ function Histogram(data, {
       .attr("transform", `translate(${marginLeft},0)`)
       .call(yAxis)
       .call(g => g.select(".domain").remove())
-      .call(g => g.selectAll(".tick line").clone()
-          .attr("x2", width - marginLeft - marginRight)
-          .attr("stroke-opacity", 0.1))
       .call(g => g.append("text")
           .attr("x", -marginLeft)
           .attr("y", 10)
@@ -302,8 +303,6 @@ unemployment = FileAttachment("unemployment-x.csv").csv({typed: true})
 chart = Histogram(unemployment, {
   value: d => d.rate,
   label: "Unemployment rate (%) →",
-  width,
-  height: 500,
   color: "steelblue"
 })
 
