@@ -2,6 +2,7 @@
 
 /* center svg element in their encolsing div*/
 div > svg, .figure-caption {
+  display:block;
   margin-left: auto;
   margin-right: auto;
 }
