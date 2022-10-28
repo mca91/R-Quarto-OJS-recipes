@@ -5,7 +5,6 @@ author: "Martin C. Arnold"
 format: 
   html:
     css: styles.css 
-    include-in-header: "my_js_libraries.html"
     code-fold: false
 ---
 
