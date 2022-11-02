@@ -8,7 +8,7 @@ format:
     code-fold: false
 ---
 
-Click [here]() to see the source of this HTML document.
+Click [here](https://raw.githubusercontent.com/mca91/R-Quarto-OJS-recipes/main/obs_recipes.qmd) to see the source of this HTML document and [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/mca91/R-Quarto-OJS-recipes/blob/main/obs_recipes.qmd) to download the quarto file.
 
 Observable offers many different ways to graph your data, but the line chart, bar chart, and scatter plot are basic and should definitely be learned. Tremendous flexibility and customisation are possible for such charts, but in this article we will cover only the simple cases--inspired by the ones presented [here](https://observablehq.com/@observablehq/chart-starter-recipes)--and focus on integrating them into a simple [Quarto document](https://quarto.org/docs/guide/) such that data can be manipulated and provided using R.
 
