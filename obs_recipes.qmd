@@ -5,7 +5,7 @@ author: "Martin C. Arnold"
 format: 
   html:
     css: styles.css 
-    code-fold: false
+    code-fold: true
 ---
 
 Click [here](https://raw.githubusercontent.com/mca91/R-Quarto-OJS-recipes/main/obs_recipes.qmd) to see the raw source code of this document and [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/mca91/R-Quarto-OJS-recipes/blob/main/obs_recipes.qmd) to download the quarto file.
@@ -164,6 +164,8 @@ iris_means
 For the data to be "compatible" with Observable plot we need to `transpose()`. Below we plot `Sepal.Length` and `Sepal.Width` colored by `Species` and add marks for their group means. 
 
 ```{ojs}
+name = "iris"
+
 /* define plot object */
 iris_plot = Plot.plot({
   width: 600, height: 400,
@@ -182,7 +184,8 @@ iris_plot = Plot.plot({
        fill: "Species",
        r: 6
     })
-  ]
+  ],
+  caption: `This is a plot of the ${name} dataset`
 })
 
 /* add legend for color */  
@@ -306,4 +309,3 @@ chart = Histogram(unemployment, {
 })
 
 ```
-
